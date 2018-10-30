@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-manager
+  namespace: kube-system
+  labels:
+    control-plane: app-manager
+    controller-tools.k8s.io: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: app-manager
+      controller-tools.k8s.io: "1.0"
+  template:
+    metadata:
+      labels:
+        control-plane: app-manager
+        controller-tools.k8s.io: "1.0"
+    spec:
+      containers:
+      - name: manager
+        image: podmanager:1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        volumeMounts:
+        - name: tz-config
+          mountPath: /etc/localtime
+      volumes:
+      - name: tz-config
+        hostPath:
+          path: /etc/localtime
+      terminationGracePeriodSeconds: 10

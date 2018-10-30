@@ -1,0 +1,95 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: podmanagers.extensions.sncloud.com
+spec:
+  group: extensions.sncloud.com
+  names:
+    kind: PodManager
+    plural: podmanagers
+    shortNames:
+      - pm
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          type: string
+        kind:
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            deploymentName:
+              type: string
+            ipSet:
+              items:
+                type: string
+              type: array
+            resources:
+              properties:
+                containers:
+                  items:
+                    properties:
+                      containerName:
+                        type: string
+                      env:
+                        items:
+                          type: object
+                        type: array
+                      image:
+                        type: string
+                      resources:
+                        type: object
+                    type: object
+                  type: array
+              type: object
+            scaleTimestamp:
+              type: string
+            strategy:
+              properties:
+                phase:
+                  type: string
+                  enum:
+                    - Binding
+                    - Deleting
+                type:
+                  type: string
+                  enum:
+                    - PodUpgrade
+                    - PodDelete
+              type: object
+          type: object
+          required:
+            - deploymentName
+            - ipSet
+        status:
+          properties:
+            conditions:
+              items:
+                properties:
+                  lastUpdateTime:
+                    format: date-time
+                    type: string
+                  message:
+                    type: string
+                  reason:
+                    type: string
+                type: object
+              type: array
+            updated:
+              type: boolean
+          type: object
+      required:
+      - spec
+      type: object
+  version: v1alpha1
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
